@@ -1,0 +1,21 @@
+sizex = 100;
+sizey = 100;
+
+D = random(0,100,x,y);
+tMax = 10;
+
+Moore { }
+
+BelousovZhabotinsky {
+  states = 100;
+  k1 = 2;
+  k2 = 3;
+  g = 39;
+}
+
+Diagnostic {
+  file = "Domain_#t.h5";
+  field = "domain";
+  interval = 1;
+  append = 0;
+}
