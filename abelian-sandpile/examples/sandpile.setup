@@ -1,0 +1,11 @@
+sizex = 1000;
+sizey = 1000;
+grains = 1000;
+doublings = 1; 
+
+Diagnostic {
+  file = "pile_#t.h5";
+  field = "pile";
+  interval = 1;
+  append = 0;
+}
