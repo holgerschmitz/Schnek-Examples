@@ -8,7 +8,9 @@
 #ifndef SRC_CELLULAR_HPP_
 #define SRC_CELLULAR_HPP_
 
-#include "blockcontainer.hpp"
+#include <schnek/variables/blockcontainer.hpp>
+
+#include <gui/colorplot.hpp>
 
 #include <schnek/grid.hpp>
 #include <schnek/variables.hpp>
@@ -18,18 +20,22 @@
 #include <boost/ref.hpp>
 
 #include <set>
+#include <list>
 
 static const int DIMENSION = 2;
 
 typedef schnek::Array<int, DIMENSION> Index;
 typedef schnek::Field<int, DIMENSION> Domain;
-typedef Domain* pDomain;
+typedef boost::shared_ptr<Domain> pDomain;
 typedef schnek::Range<int, DIMENSION> Range;
 
 class Neighbourhood;
 class Rule;
 
-class Cellular : public schnek::Block, public BlockContainer<Neighbourhood>, public BlockContainer<Rule>
+class Cellular : public schnek::Block,
+                 public schnek::BlockContainer<Neighbourhood>,
+                 public schnek::BlockContainer<Rule>,
+                 public schnek::BlockContainer<ColorPlot<Domain> >
 {
   private:
     static Index globalMax;

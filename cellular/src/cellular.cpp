@@ -8,7 +8,6 @@
 #include "cellular.hpp"
 #include "neighbourhood.hpp"
 #include "rules.hpp"
-#include "blockcontainer.hpp"
 
 #include <schnek/parser.hpp>
 #include <schnek/tools/fieldtools.hpp>
@@ -19,6 +18,7 @@
 
 #include <boost/ref.hpp>
 #include <boost/random.hpp>
+#include <boost/make_shared.hpp>
 
 #include <mpi.h>
 
@@ -85,13 +85,13 @@ void Cellular::init()
 
   stagger = false;
 
-  domain = new Domain(lowIn, highIn, domainSize, stagger, 2);
+  domain = boost::make_shared<Domain>(lowIn, highIn, domainSize, stagger, 2);
 
   neighbourCells.clear();
 
-  BlockContainer<Neighbourhood>::child_iterator_range childRange = BlockContainer<Neighbourhood>::childBlocks();
+  BlockContainer<Neighbourhood>::iterator_range childRange = BlockContainer<Neighbourhood>::childBlocks();
 
-  for (std::list<Neighbourhood*>::const_iterator it = childRange.begin(); it!=childRange.end(); ++it)
+  for (BlockContainer<Neighbourhood>::iterator it = childRange.begin(); it!=childRange.end(); ++it)
     (*it)->getNeighbourCells(neighbourCells);
 
   if (BlockContainer<Rule>::numChildren()!=1)
@@ -104,7 +104,7 @@ void Cellular::init()
 void Cellular::execute()
 {
 
-  Rule *rule = *(BlockContainer<Rule>::childBlocks().begin());
+  boost::shared_ptr<Rule> rule = *(BlockContainer<Rule>::childBlocks().begin());
 
   int t=0;
 
@@ -126,6 +126,16 @@ void Cellular::execute()
     subdivision.exchange(*domain);
 
     schnek::DiagnosticManager::instance().execute();
+
+    typedef schnek::BlockContainer<ColorPlot<Domain> > PlotType;
+
+    PlotType::iterator end = PlotType::childBlocks().end();
+    for (PlotType::iterator it = PlotType::childBlocks().begin();
+         it != end;
+         ++it)
+    {
+      (*it)->execute();
+    }
   }
 }
 
@@ -159,9 +169,11 @@ int main(int argc, char **argv)
 
     blocks("BelousovZhabotinsky").setClass<BelousovZhabotinskyRule>();
 
+    blocks("Plot").setClass< ColorPlot<Domain> >();
+
     blocks("cellular").addChildren("Diagnostic")
         ("Neumann")("Moore")("NeumannNoCentre")("MooreNoCentre")
-        ("BelousovZhabotinsky");
+        ("BelousovZhabotinsky")("Plot");
 
     std::ifstream in("cellular.setup");
     if (!in) throw std::string("Could not open file 'cellular.setup'");

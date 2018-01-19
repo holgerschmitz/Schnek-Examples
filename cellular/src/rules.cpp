@@ -7,11 +7,13 @@
 
 #include "rules.hpp"
 
+#include <boost/make_shared.hpp>
+
 void Rule::init()
 {
   retrieveData("domain", domain);
 
-  domainBuffer = new Domain(*domain);
+  domainBuffer = boost::make_shared<Domain>(*domain);
 }
 
 int Rule::sumNeighbours(Index pos, const std::list<Index>& neighbourCells)

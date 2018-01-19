@@ -2,7 +2,7 @@ sizex = 100;
 sizey = 100;
 
 D = random(0,100,x,y);
-tMax = 10;
+tMax = 100000;
 
 Moore { }
 
@@ -13,9 +13,15 @@ BelousovZhabotinsky {
   g = 39;
 }
 
-Diagnostic {
-  file = "Domain_#t.h5";
-  field = "domain";
-  interval = 1;
-  append = 0;
+//Diagnostic {
+//  file = "Domain_#t.h5";
+//  field = "domain";
+//  interval = 1;
+//  append = 0;
+//}
+
+Plot {
+    field = "domain";
+    min = 0;
+    max = 100;
 }

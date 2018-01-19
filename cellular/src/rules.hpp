@@ -8,11 +8,11 @@
 #ifndef SRC_RULES_HPP_
 #define SRC_RULES_HPP_
 
-#include "blockcontainer.hpp"
 #include "cellular.hpp"
+#include <schnek/variables/blockcontainer.hpp>
 #include <set>
 
-class Rule : public ChildBlock<Rule>
+class Rule : public schnek::ChildBlock<Rule>
 {
   protected:
     pDomain domain;

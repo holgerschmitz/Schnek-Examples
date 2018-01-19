@@ -8,12 +8,12 @@
 #ifndef SRC_NEIGHBOURHOOD_HPP_
 #define SRC_NEIGHBOURHOOD_HPP_
 
-#include "blockcontainer.hpp"
 #include "cellular.hpp"
+#include <schnek/variables/blockcontainer.hpp>
 
 #include <set>
 
-class Neighbourhood : public ChildBlock<Neighbourhood>
+class Neighbourhood : public schnek::ChildBlock<Neighbourhood>
 {
   public:
     virtual void getNeighbourCells(std::list<Index> &neighbourCells) const = 0;
