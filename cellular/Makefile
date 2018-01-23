@@ -17,7 +17,7 @@ HEADERS = src/cellular.hpp \
 LINK_OBJ = ../include/gui/colorplot.o
 
 CXX = mpic++
-CXXFLAGS = -g -O3 -Wall
+CXXFLAGS = -g -Wall
 
 INCLUDES = -I/usr/local/include -I../include
 LDFLAGS = $(LINK_OBJ) -L/usr/lib/i386-linux-gnu -lschnek -lhdf5 -lboost_thread -lboost_system `pkg-config --libs gtk+-3.0` -lfreetype
@@ -25,9 +25,9 @@ LDFLAGS = $(LINK_OBJ) -L/usr/lib/i386-linux-gnu -lschnek -lhdf5 -lboost_thread -
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDES) -o $@ $<
 
-all: $(FULLTARGET) gui
+all: $(FULLTARGET)
 
-$(FULLTARGET): $(HEADERS) $(OBJECTS)
+$(FULLTARGET): gui $(HEADERS) $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) $(LDFLAGS) -o $(FULLTARGET)
 	
 gui:

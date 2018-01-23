@@ -10,7 +10,7 @@ OBJECTS = colorplot.o
 HEADERS = colorplot.hpp
 
 CXX = g++
-CXXFLAGS = -g -O3 -Wall `pkg-config --cflags gtk+-3.0`
+CXXFLAGS = -g -Wall `pkg-config --cflags gtk+-3.0`
 
 INCLUDES = -I/usr/local/include -I..
 
