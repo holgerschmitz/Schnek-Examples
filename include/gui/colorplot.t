@@ -24,10 +24,12 @@ void ColorPlot<GridType>::execute()
   GtkWindowInterface::GridType::IndexType lo = buffer.getLo();
   GtkWindowInterface::GridType::IndexType hi = buffer.getHi();
 
+  GridType &g = *grid;
+
   for (int i=lo[0]; i<=hi[0]; ++i)
     for (int j=lo[1]; j<=hi[1]; ++j)
     {
-      buffer(i,j) = std::max(1.0, std::min(0.0, (grid(i,j) - min)/(max - min)));
+      buffer(i,j) = std::max(1.0, std::min(0.0, (g(i,j) - min)/(max - min)));
     }
 
   GtkWindowInterface::instance().updateBuffer();

@@ -50,6 +50,9 @@ class GtkWindowInterface : public schnek::Singleton<GtkWindowInterface> {
     boost::thread runner_thread;
 
     GdkPixbuf *pixbuf;
+    GtkImage *imageWidget;
+    GtkWidget *window;
+
 
     GtkWindowInterface();
     void startGtkApplication();

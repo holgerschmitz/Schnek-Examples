@@ -33,6 +33,8 @@ void GtkWindowInterface::WindowRunner::operator()()
 }
 
 GtkWindowInterface::GtkWindowInterface() {
+  pixbuf = NULL;
+  imageWidget = NULL;
   bufferUpdated = false;
   runner = boost::make_shared<WindowRunner>(boost::ref(*this));
   runner_thread = boost::thread(*runner);
@@ -78,14 +80,13 @@ void GtkWindowInterface::updateCheck() {
   std::cout << '.';
   if (update) {
     std::cout << "UPDATE\n";
+    render();
 //    gtk_widget_queue_draw(glRenderWidget);
   }
 }
 
 void GtkWindowInterface::activate (GtkApplication* app, gpointer user_data)
 {
-  GtkWidget *window;
-
   window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (window), "Window");
   gtk_window_set_default_size (GTK_WINDOW (window), 200, 200);
@@ -97,7 +98,7 @@ void GtkWindowInterface::activate (GtkApplication* app, gpointer user_data)
 //  g_signal_connect (glRenderWidget, "render", G_CALLBACK (render), NULL);
   //gtk_container_add(GTK_CONTAINER(window), glRenderWidget);
 
-  gtk_widget_show_all (window);
+
 }
 
 gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
@@ -108,17 +109,24 @@ gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
   Image::IndexType hi = buffer.getHi();
   image.resize(lo, hi);
 
-  for (int i=lo[0]; i<=hi[0]; ++i)
-    for (int j=lo[1]; j<=hi[1]; ++j)
-    {
-      guchar c = (int)(buffer(i,j) * 255);
-      pixel &p = image(i,j);
-      p.c[0] = c;
-      p.c[0] = 255-c;
-      p.c[0] = c;
-    }
+  {
+    boost::lock_guard<boost::mutex> guard(mtx);
+    GridType &buffer = *bufferA;
+    for (int i=lo[0]; i<=hi[0]; ++i)
+      for (int j=lo[1]; j<=hi[1]; ++j)
+      {
+        guchar c = (int)(buffer(i,j) * 255);
+        std::cout << int(c) << " ";
+        pixel &p = image(i,j);
+        p.c[0] = c;
+        p.c[1] = 255-c;
+        p.c[2] = c;
+      }
+  }
 
-  if (!pixbuf) {
+  if (pixbuf==NULL)
+  {
+    std::cout << "Creating window!\n==================\n";
     pixbuf = gdk_pixbuf_new_from_data(image.getRawData()->c,
                                       GDK_COLORSPACE_RGB,
                                       false,
@@ -128,6 +136,14 @@ gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
                                       hi[1]-lo[1]+1,
                                       NULL,
                                       NULL);
+    imageWidget = (GtkImage*)gtk_image_new_from_pixbuf (pixbuf);
+    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(imageWidget));
+    gtk_widget_show_all (window);
   }
+  else
+  {
+    gtk_image_set_from_pixbuf (imageWidget, pixbuf);
+  }
+  gtk_widget_queue_draw(GTK_WIDGET(imageWidget));
   return true;
 }
