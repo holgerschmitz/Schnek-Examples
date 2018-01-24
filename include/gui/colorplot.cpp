@@ -77,9 +77,7 @@ void GtkWindowInterface::updateCheck() {
     update = bufferUpdated;
     bufferUpdated = false;
   }
-  std::cout << '.';
   if (update) {
-    std::cout << "UPDATE\n";
     render();
 //    gtk_widget_queue_draw(glRenderWidget);
   }
@@ -103,7 +101,6 @@ void GtkWindowInterface::activate (GtkApplication* app, gpointer user_data)
 
 gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
 {
-  std::cout << "Render Called\n";
   GridType &buffer = *bufferA;
   Image::IndexType lo = buffer.getLo();
   Image::IndexType hi = buffer.getHi();
@@ -115,14 +112,14 @@ gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
     for (int i=lo[0]; i<=hi[0]; ++i)
       for (int j=lo[1]; j<=hi[1]; ++j)
       {
-        guchar c = (int)(buffer(i,j) * 255);
-        std::cout << int(c) << " ";
+        guchar c = (int)(5+ buffer(i,j) * 245);
         pixel &p = image(i,j);
         p.c[0] = c;
-        p.c[1] = 255-c;
+        p.c[1] = int(255)-c;
         p.c[2] = c;
       }
   }
+
 
   if (pixbuf==NULL)
   {
@@ -133,12 +130,14 @@ gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
                                       8,
                                       hi[0]-lo[0]+1,
                                       hi[1]-lo[1]+1,
-                                      hi[1]-lo[1]+1,
+                                      3*(hi[1]-lo[1]+1),
                                       NULL,
                                       NULL);
     imageWidget = (GtkImage*)gtk_image_new_from_pixbuf (pixbuf);
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(imageWidget));
     gtk_widget_show_all (window);
+
+    std::cout << "Channels: " << gdk_pixbuf_get_n_channels(pixbuf) << "\n";
   }
   else
   {
@@ -147,3 +146,27 @@ gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
   gtk_widget_queue_draw(GTK_WIDGET(imageWidget));
   return true;
 }
+
+
+
+  //
+  // if (image==NULL) {
+  //   image = new guchar[3*dims[0]*dims[1]];
+  // }
+  //
+  // {
+  //   boost::lock_guard<boost::mutex> guard(mtx);
+  //   GridType &buffer = *bufferA;
+  //   for (int i=lo[0]; i<=hi[0]; ++i)
+  //     for (int j=lo[1]; j<=hi[1]; ++j)
+  //     {
+  //       double v = i/101.;
+  //       guchar c = (int)(v /* buffer(i,j) */ * 255);
+  //       uchar *p = image + y * rowstride + x * n_channels;
+  //       pixel &p = image(i,j);
+  //       p.c[0] = c;
+  //       p.c[1] = 255-c;
+  //       p.c[2] = c;
+  //       p.c[3] = 255;
+  //     }
+  // }

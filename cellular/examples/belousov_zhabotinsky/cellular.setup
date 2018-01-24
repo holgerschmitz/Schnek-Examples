@@ -1,8 +1,8 @@
-sizex = 100;
-sizey = 100;
+sizex = 200;
+sizey = 200;
 
 D = random(0,100,x,y);
-tMax = 100000;
+tMax = 1000;
 
 Moore { }
 
@@ -20,8 +20,8 @@ BelousovZhabotinsky {
 //  append = 0;
 //}
 
-Plot {
-    field = "domain";
-    min = 0;
-    max = 100;
-}
+//Plot {
+//    field = "domain";
+//    min = 0;
+//    max = 100;
+//}

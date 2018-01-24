@@ -66,10 +66,10 @@ class Cellular : public schnek::Block,
     static Index getGlobalMax() { return globalMax; }
 };
 
-class CellularDiagnostic : public schnek::HDFGridDiagnostic<Domain, Domain* >
+class CellularDiagnostic : public schnek::HDFGridDiagnostic<Domain, pDomain >
 {
   protected:
-    typedef HDFGridDiagnostic<Domain, Domain* >::IndexType IndexType;
+    typedef HDFGridDiagnostic<Domain, pDomain >::IndexType IndexType;
     IndexType getGlobalMin();
     IndexType getGlobalMax();
 };

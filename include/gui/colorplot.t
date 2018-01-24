@@ -18,7 +18,7 @@ void ColorPlot<GridType>::initParameters(schnek::BlockParameters &blockPars)
 template<class GridType>
 void ColorPlot<GridType>::execute()
 {
-  boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+  // boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
   GtkWindowInterface::GridType &buffer = *GtkWindowInterface::instance().getBuffer();
 
   GtkWindowInterface::GridType::IndexType lo = buffer.getLo();
@@ -29,7 +29,7 @@ void ColorPlot<GridType>::execute()
   for (int i=lo[0]; i<=hi[0]; ++i)
     for (int j=lo[1]; j<=hi[1]; ++j)
     {
-      buffer(i,j) = std::max(1.0, std::min(0.0, (g(i,j) - min)/(max - min)));
+      buffer(i,j) = std::min(1.0, std::max(0.0, (g(i,j) - min)/(max - min)));
     }
 
   GtkWindowInterface::instance().updateBuffer();
@@ -47,5 +47,3 @@ void ColorPlot<GridType>::init()
   buffer->resize(*grid);
   GtkWindowInterface::instance().updateBuffer();
 }
-
-
