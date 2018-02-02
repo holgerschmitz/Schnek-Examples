@@ -1,5 +1,5 @@
-sizex = 200;
-sizey = 200;
+sizex = 800;
+sizey = 600;
 
 D = random(0,100,x,y);
 tMax = 1000;
@@ -20,8 +20,8 @@ BelousovZhabotinsky {
 //  append = 0;
 //}
 
-//Plot {
-//    field = "domain";
-//    min = 0;
-//    max = 100;
-//}
+Plot {
+    field = "domain";
+    min = 0;
+    max = 100;
+}

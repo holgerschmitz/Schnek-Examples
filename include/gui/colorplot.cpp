@@ -45,13 +45,12 @@ GtkWindowInterface::GtkWindowInterface() {
 void GtkWindowInterface::startGtkApplication()
 {
   GtkApplication *app;
-  int status;
 
   g_timeout_add (10, my_timer_callback, this);
 
   app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (global_activate), NULL);
-  status = g_application_run (G_APPLICATION (app), 0, NULL);
+  g_application_run (G_APPLICATION (app), 0, NULL);
   g_object_unref (app);
 }
 
@@ -121,28 +120,29 @@ gboolean GtkWindowInterface::render() //GtkGLArea *area, GdkGLContext *context)
   }
 
 
-  if (pixbuf==NULL)
+  pixbuf = gdk_pixbuf_new_from_data(image.getRawData()->c,
+                                    GDK_COLORSPACE_RGB,
+                                    false,
+                                    8,
+                                    hi[0]-lo[0]+1,
+                                    hi[1]-lo[1]+1,
+                                    3*(hi[1]-lo[1]+1),
+                                    NULL,
+                                    NULL);
+  if (imageWidget==NULL)
   {
-    std::cout << "Creating window!\n==================\n";
-    pixbuf = gdk_pixbuf_new_from_data(image.getRawData()->c,
-                                      GDK_COLORSPACE_RGB,
-                                      false,
-                                      8,
-                                      hi[0]-lo[0]+1,
-                                      hi[1]-lo[1]+1,
-                                      3*(hi[1]-lo[1]+1),
-                                      NULL,
-                                      NULL);
+    std::cerr << "Creating window!\n==================\n";
     imageWidget = (GtkImage*)gtk_image_new_from_pixbuf (pixbuf);
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(imageWidget));
     gtk_widget_show_all (window);
 
-    std::cout << "Channels: " << gdk_pixbuf_get_n_channels(pixbuf) << "\n";
+    std::cerr << "Channels: " << gdk_pixbuf_get_n_channels(pixbuf) << "\n";
   }
   else
   {
     gtk_image_set_from_pixbuf (imageWidget, pixbuf);
   }
+  g_object_unref(pixbuf);
   gtk_widget_queue_draw(GTK_WIDGET(imageWidget));
   return true;
 }
